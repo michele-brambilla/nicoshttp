@@ -27,6 +27,19 @@ class NicosCacheReader(object):
     def add_deserializer(self, deserializer):
         self._deserializer = deserializer
 
+    @staticmethod
+    def _message_is_interesting(key):
+        if key[0] != 'nicos' or len(key) != 3:
+            return None
+        if key[2] in ['status', 'value']:
+            return True
+
+    def _update_db(self, key, value = 'found'):
+        if not self.cache_db.get(key[1]):
+            self.cache_db.update({key[1] : { key[2] : value}})
+        else:
+            self.cache_db[key[1]].update({ key[2] : value})
+
 
 class KafkaCache(NicosCacheReader):
     _consumer = None
@@ -68,19 +81,6 @@ class KafkaCache(NicosCacheReader):
                 key = message.key.decode().split('/')
                 if self._message_is_interesting(key):
                     self._update_db(key)
-
-    @staticmethod
-    def _message_is_interesting(key):
-        if key[0] != 'nicos' or len(key) != 3:
-            return None
-        if key[2] in ['status', 'value']:
-            return True
-
-    def _update_db(self, key, value = 'found'):
-        if not self.cache_db.get(key[1]):
-            self.cache_db.update({key[1] : { key[2] : value}})
-        else:
-            self.cache_db[key[1]].update({ key[2] : value})
 
     def _log(self):
         consumer = self._consumer
