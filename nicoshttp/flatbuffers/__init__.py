@@ -25,7 +25,7 @@
 from __future__ import absolute_import
 
 import flatbuffers
-from nicoshttp.ns10 import CacheEntry as CacheEntryFB
+from nicoshttp.flatbuffers import CacheEntry as CacheEntryFB
 from nicoshttp.serializer import NicosCacheEntry, CacheSerializer
 
 file_identifier = 'ns10'
@@ -74,12 +74,14 @@ def decode(buf):
     fb_entry = CacheEntryFB.CacheEntry.GetRootAsCacheEntry(buf, 0)
 
     # Capture the default values of key, ttl and set them to None
-    key = fb_entry.Key() if fb_entry.Key() else None
+    key = fb_entry.Key().decode() if fb_entry.Key() else None
     ttl = fb_entry.Ttl() if fb_entry.Ttl() != 0 else None
 
     # Try to get the value if it was written
     try:
         value = fb_entry.Value()
+        if isinstance(value, bytes):
+            value = value.decode()
     except Exception:
         value = None
 

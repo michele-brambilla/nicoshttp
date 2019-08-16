@@ -2,8 +2,8 @@ from __future__ import absolute_import
 
 import pytest
 
-from nicoshttp.cache import KafkaCache
-from nicoshttp.cache import NicosCacheReader as Cache
+from nicoshttp.cachereader import KafkaCache
+from nicoshttp.cachereader import NicosCacheReader as Cache
 
 
 class MockKafkaCache(KafkaCache):
