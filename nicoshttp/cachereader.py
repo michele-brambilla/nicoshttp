@@ -1,15 +1,6 @@
 from kafka import KafkaConsumer, TopicPartition
 
 
-class CacheDeserializer(object):
-
-    def __init__(self, **kwargs):
-        raise NotImplementedError
-
-    def deserialize(self, entry):
-        raise NotImplementedError
-
-
 class NicosCacheReader(object):
     cache_db = {}
     _stop = False
